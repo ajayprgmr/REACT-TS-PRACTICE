@@ -1,176 +1,77 @@
-import React, { useState, useTransition } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/navigation';
+import { useState, ViewTransition, useTransition } from 'react';
 import './viewTransition.css';
 
-interface ImageInfo {
-  id: number;
-  url: string;
-  title: string;
-  description: string;
-}
+const POSTER_IMG =
+  'https://occ-0-2857-2164.1.nflxso.net/dnm/api/v6/Qs00mKCpRvrkl3HZAN5KwEL1kpE/AAAABYza4Bc8BiFx9fnItZp5-wMNK7sMaB5f26sNxPXEKVO73SnjmArfY-9jmsXjctOkqDopJRYhHvGJ6xSwO9ui6T-mPQyzrIuAoo0.jpg?r=880';
 
-const images: ImageInfo[] = [
-  {
-    id: 1,
-    url: 'https://placehold.co/400x300/FF6B6B/FFFFFF?text=Image+1',
-    title: 'Image 1',
-    description: 'Beautiful landscape with mountains',
-  },
-  {
-    id: 2,
-    url: 'https://placehold.co/400x300/4ECDC4/FFFFFF?text=Image+2',
-    title: 'Image 2',
-    description: 'Ocean view at sunset',
-  },
-  {
-    id: 3,
-    url: 'https://placehold.co/400x300/95E1D3/FFFFFF?text=Image+3',
-    title: 'Image 3',
-    description: 'Forest pathway in autumn',
-  },
-  {
-    id: 4,
-    url: 'https://placehold.co/400x300/F38181/FFFFFF?text=Image+4',
-    title: 'Image 4',
-    description: 'City skyline at night',
-  },
-  {
-    id: 5,
-    url: 'https://placehold.co/400x300/AA96DA/FFFFFF?text=Image+5',
-    title: 'Image 5',
-    description: 'Desert dunes at dawn',
-  },
-  {
-    id: 6,
-    url: 'https://placehold.co/400x300/FCBAD3/FFFFFF?text=Image+6',
-    title: 'Image 6',
-    description: 'Tropical beach paradise',
-  },
-  {
-    id: 7,
-    url: 'https://placehold.co/400x300/FFFFD2/000000?text=Image+7',
-    title: 'Image 7',
-    description: 'Snow-capped mountains',
-  },
-  {
-    id: 8,
-    url: 'https://placehold.co/400x300/A8E6CF/000000?text=Image+8',
-    title: 'Image 8',
-    description: 'Meadow with wildflowers',
-  },
-];
+function ViewTransitionDemo() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [, startTransition] = useTransition();
 
-// Helper function to use View Transition API with React
-const useViewTransition = () => {
-  const [isPending, startTransition] = useTransition();
-
-  const startViewTransition = React.useCallback((callback: () => void) => {
-    // Use View Transition API if supported
-    if ('startViewTransition' in document && typeof document.startViewTransition === 'function') {
-      document.startViewTransition(() => {
-        startTransition(callback);
-      });
-    } else {
-      // Fallback: use React's useTransition
-      startTransition(callback);
-    }
-  }, [startTransition]);
-
-  return { startViewTransition, isPending };
-};
-
-export const ViewTransition: React.FC = () => {
-  const [hoveredImage, setHoveredImage] = useState<ImageInfo | null>(null);
-  const [hoverPosition, setHoverPosition] = useState<{ top: number; left: number } | null>(null);
-  const { startViewTransition } = useViewTransition();
-
-  const handleMouseEnter = (image: ImageInfo, event: React.MouseEvent<HTMLDivElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const position = {
-      top: rect.top,
-      left: rect.left,
-    };
-    
-    // Use View Transition API for smooth transitions
-    startViewTransition(() => {
-      setHoverPosition(position);
-      setHoveredImage(image);
-    });
+  const openModal = () => {
+    startTransition(() => setIsOpen(true));
   };
 
-  const handleMouseLeave = () => {
-    // Use View Transition API for smooth transitions
-    startViewTransition(() => {
-      setHoveredImage(null);
-      setHoverPosition(null);
-    });
+  const closeModal = () => {
+    startTransition(() => setIsOpen(false));
   };
 
   return (
-    <div className="view-transition-container">
-      <h1 className="carousel-title">Image Carousel with View Transition API</h1>
-      
-      <div className="swiper-wrapper-container">
-        <Swiper
-          modules={[Navigation]}
-          navigation={{
-            prevEl: '.swiper-button-prev-custom',
-            nextEl: '.swiper-button-next-custom',
-          }}
-          spaceBetween={30}
-          slidesPerView="auto"
-          className="carousel-swiper"
-        >
-          {images.map((image) => (
-            <SwiperSlide key={image.id} className="carousel-slide">
-              <div
-                className="image-container"
-                onMouseEnter={(e) => handleMouseEnter(image, e)}
-                onMouseLeave={handleMouseLeave}
-                style={{ viewTransitionName: `image-${image.id}` }}
-              >
-                <img
-                  src={image.url}
-                  alt={image.title}
-                  className="carousel-image"
-                />
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-
-        {/* Custom Navigation Buttons */}
-        <button className="swiper-button-prev-custom" aria-label="Previous slide">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </button>
-        <button className="swiper-button-next-custom" aria-label="Next slide">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </button>
-      </div>
-
-      {/* Hover Info Overlay */}
-      {hoveredImage && hoverPosition && (
-        <div
-          className="image-info-overlay"
-          style={{
-            top: `${hoverPosition.top}px`,
-            left: `${hoverPosition.left}px`,
-            viewTransitionName: `info-${hoveredImage.id}`,
-          }}
-        >
-          <div className="info-content">
-            <h3 className="info-title">{hoveredImage.title}</h3>
-            <p className="info-description">{hoveredImage.description}</p>
+    <ViewTransition>
+      <div className="view-transition-main">
+        {/* CARD */}
+        {!isOpen && (
+          <div onClick={openModal} className="view-t-card">
+            <img
+              src={POSTER_IMG}
+              alt="poster"
+              style={{ viewTransitionName: 'poster' }}
+            />
           </div>
-        </div>
-      )}
-    </div>
+        )}
+
+        {/* MODAL */}
+        {isOpen && (
+          <div className="modal-container">
+            <div className="modal-hero">
+              <img
+                src={POSTER_IMG}
+                alt="poster"
+                className="modal-hero-img"
+                style={{ viewTransitionName: 'poster' }}
+              />
+
+              <div className="modal-hero-content">
+                <h1 className="modal-hero-title">
+                  Welcome to the Experience
+                </h1>
+                <p className="modal-hero-subtitle">
+                  Transitions that feel natural and powerful.
+                </p>
+              </div>
+            </div>
+
+            <div className="modal-body">
+              <h2>This is From Modal</h2>
+              <p>
+                Discover next-gen UI behavior with smooth state changes and
+                responsive layouts. View Transitions remove the need for
+                complex animation logic.
+              </p>
+              <p>
+                This interaction uses a shared element that morphs between
+                layouts — the same technique used by Netflix and Apple TV.
+              </p>
+
+              <button className="modal-close-btn" onClick={closeModal}>
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </ViewTransition>
   );
-};
+}
+
+export default ViewTransitionDemo;
