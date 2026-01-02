@@ -1,0 +1,28 @@
+.requestFrameAnimationContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.modalContainer {
+  position: absolute;
+  top: -9999;
+  left: -9999;
+  margin-top: 8px;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  pointer-events: none; 
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.modalContainer.opening {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.modalContainer.closing {
+  opacity: 0;
+}
