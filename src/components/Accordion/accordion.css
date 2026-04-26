@@ -1,0 +1,7 @@
+.accordion-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #FFF;
+    min-height: 100vh;
+}

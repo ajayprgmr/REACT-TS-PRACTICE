@@ -1,0 +1,25 @@
+.home-page-main {
+    width: 100%;
+    height: inherit;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.home-page-main>.navigator-container {
+    display: flex;
+    gap: 2rem;
+}
+
+.navigator {
+    color: #FFF;
+    font-weight: bold;
+    font-size: 1.5rem;
+    text-transform: capitalize;
+    letter-spacing: 2px;
+}
+
+.navigator:hover {
+    color: aquamarine;
+    cursor: pointer;
+}

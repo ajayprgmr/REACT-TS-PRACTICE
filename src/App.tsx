@@ -1,10 +1,10 @@
-import './App.css';
-import RequestAnimationFrame from './requestAnimationFrame';
+import Home from './components/Home'
+import './app.css'
 
 function App() {
   return (
-    <div className="main_return">
-      <RequestAnimationFrame />
+    <div className="app-layout">
+      <Home />
     </div>
   );
 }
