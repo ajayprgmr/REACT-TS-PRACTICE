@@ -1,50 +1,66 @@
-import React, { useEffect, useRef, useState } from 'react';
-import './virtualizedList.css'
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-const ITEM_HEIGHT = 100;
+const BUFFER = 3;
 
-const VirtualizedList: React.FC = () => {
-    const data = Array.from({ length: 1000 }, (_, i) => i);
+interface VirtualizedListProps<T> {
+    data: T[];
+    itemHeight: number;
+    gap?: number;
+    containerHeight?: number;
+    renderItem: (item: T, index: number) => React.ReactNode;
+}
+
+const VirtualizedList = <T,>({
+    data,
+    itemHeight,
+    gap = 0,
+    containerHeight = 800,
+    renderItem,
+}: VirtualizedListProps<T>) => {
     const [scrollTop, setScrollTop] = useState(0);
-    const [clientHeight, setClientHeight] = useState(0);
-    const [startIdx, setStartIdx] = useState(0);
-    const [endIdx, setEndIdx] = useState(0);
-    const virtualizedListRef = useRef(<HTMLDivElement);
+    const rafRef = useRef<number | null>(null);
 
+    const effectiveItemHeight = itemHeight + gap;
+    const visibleCount = Math.ceil(containerHeight / effectiveItemHeight);
+    const startIdx = Math.max(0, Math.floor(scrollTop / effectiveItemHeight) - BUFFER);
+    const endIdx = Math.min(data.length, startIdx + visibleCount + BUFFER * 2);
+    const offsetY = startIdx * effectiveItemHeight;
+    const totalHeight = data.length * effectiveItemHeight - gap; 
 
-    const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-        setScrollTop(e.currentTarget.scrollTop)
-    }
+    const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+        const top = e.currentTarget.scrollTop;
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        rafRef.current = requestAnimationFrame(() => setScrollTop(top));
+    }, []);
 
-
-    useEffect(() => {
-        if(!virtualizedListRef.current) return 
-
-        setStartIdx(Math.floor(virtualizedListRef?.));
-        virtualizedListRef.current? setClientHeight(virtualizedListRef.current.clientHeight)
-
-    }), [scrollTop, clientHeight]
-
+    const visibleItems = useMemo(() => {
+        return data.slice(startIdx, endIdx).map((item, i) =>
+            renderItem(item, startIdx + i)
+        );
+    }, [startIdx, endIdx, data, renderItem]);
 
     return (
-        <div className="virtualized__list--container">
-            <div className='virtualized__list' onScroll={handleScroll} ref={virtualizedListRef}>
-                {
-                    data.slice(startIdx, endIdx)?.map((ele, i) => {
-                        return (
-                            <div className="signle-item" key={i} style={{ minHeight: `${ITEM_HEIGHT}px` }}>
-                                {ele}
-                            </div>
-                        )
-                    })
-                }
-            </div>
-
-            <div className="meta-data-view">
-                <div className="meta-item">{`scrollTop:${scrollTop}`}</div>
-                <div className="meta-item">{` startIndex:${startIdx}, EndIdx:${endIdx}`}</div>
-                <div className="meta-item">{` clientHeight:${Math.floor(clientHeight)}`}</div>
-                <div className="meta-item">{` RenderedItem:${Math.floor(clientHeight / ITEM_HEIGHT)}`}</div>
+        <div
+            onScroll={handleScroll}
+            style={{
+                height: containerHeight,
+                overflowY: 'auto',
+                position: 'relative',
+            }}
+        >
+            <div style={{ height: totalHeight, position: 'relative' }}>
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    width: '100%',
+                    transform: `translateY(${offsetY}px)`,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: `${gap}px`,
+                    color: '#FFF'
+                }}>
+                    {visibleItems}
+                </div>
             </div>
         </div>
     );
