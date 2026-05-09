@@ -30,7 +30,7 @@ createRoot(document.getElementById('root')!).render(
                                     display: 'flex',
                                     alignItems: 'center',
                                     padding: '0 12px',
-                                    background:'#000'
+                                    background: '#000'
                                 }}
                             >
                                 {item}
@@ -39,7 +39,6 @@ createRoot(document.getElementById('root')!).render(
                     />
                 }
             />
-
         </Routes>
     </BrowserRouter>
 )

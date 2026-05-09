@@ -8,6 +8,7 @@ const routes = [
     { path: '/toolip', text: 'tooltip' },
     { path: '/slider', text: 'slider' },
     { path: '/virtualizedList', text: 'Virtualized List' },
+    { path: '/toast', text: 'Toast' },
 ]
 
 const routeMap = new Map(routes.map(route => [route.path, route]));
