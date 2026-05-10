@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import './home.css';
+import { useToast } from '../Toast';
 
 const routes = [
     { path: '/accordion', text: 'accordion' },
@@ -8,7 +9,7 @@ const routes = [
     { path: '/toolip', text: 'tooltip' },
     { path: '/slider', text: 'slider' },
     { path: '/virtualizedList', text: 'Virtualized List' },
-    { path: '/toast', text: 'Toast' },
+    { path: '/toast', text: 'Check Toast' },
 ]
 
 const routeMap = new Map(routes.map(route => [route.path, route]));
@@ -16,6 +17,7 @@ const routeMap = new Map(routes.map(route => [route.path, route]));
 function Home() {
 
     const Navigate = useNavigate();
+    const { addToast } = useToast()
 
     const handleFromHomeNavigatorClick = (
         e: React.MouseEvent<HTMLDivElement>
@@ -26,7 +28,9 @@ function Home() {
         if (!path) return;
 
         const route = routeMap.get(path);
-        if (route) {
+        if (route?.path == '/toast') {
+            addToast({ title: 'Checking', type: 'FAILURE', autoHideTimerInMs: 3000 })
+        } else if (route) {
             Navigate(route.path)
         }
     };

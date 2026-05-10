@@ -1,6 +1,5 @@
 import Home from './components/Home'
 import { ToastProvider } from './components/Toast';
-import ToastComponent from './components/Toast';
 import './app.css'
 
 function App() {
@@ -9,7 +8,6 @@ function App() {
     <ToastProvider>
       <div className="app-layout">
         <Home />
-        <ToastComponent />
       </div>
     </ToastProvider>
   );
